@@ -5,7 +5,8 @@ Dependencia de back-end
 * NodeJS
 * Python
 * httplib2 de Python
-* apiclient.discovery
+* apiclient.discovery de Python
+* googleapis de NodeJS
 
 ## Instalación de pip
 
@@ -22,3 +23,7 @@ Dependencia de back-end
 ## Instalación de apiclient.discovery
 
       sudo pip install --upgrade google-api-python-client         
+
+## Instalación de googleapis
+
+      npm install googleapis --save
