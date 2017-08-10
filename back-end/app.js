@@ -1,9 +1,12 @@
-var http =  require('http');
+var express  = require('express');
+
+const app = express();
+
+app.get('/',function (req,res){
+  res.send('Hello word');
+})
 
 
-http.createServer(function(req,res){
-  res.writeHead(200,{'Content-Type':'text/plain'});
-  res.end('Hello word');
-}).listen(1337,'127.0.0.1');
-
-console.log('Server running at http//127.0.0.1:1337');
+app.listen(3050, function(){
+  console.log('Ya se lanzó el server');
+})
