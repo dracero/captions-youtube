@@ -32,3 +32,9 @@ Dependencia de back-end
 
 ## Instalación de express
       npm install express
+
+
+## Youtube API
+
+Se necesita tener el client_secret.json para poder realizar los request de forma autorizada, para eso hay que ir a http://google.console.developers y descargarlo.
+      
