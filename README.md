@@ -1,0 +1,40 @@
+# captions-youtube
+
+
+Dependencia de back-end
+* NodeJS
+* Python
+* httplib2 de Python
+* apiclient.discovery de Python
+* googleapis de NodeJS
+* express de NodeJS
+
+## Instalación de pip
+
+
+      curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py"
+      
+      sudo python get-pip.py
+
+
+## Instalación de httplib2
+
+      sudo pip install httplib2
+      
+## Instalación de apiclient.discovery
+
+      sudo pip install --upgrade google-api-python-client         
+
+## Instalación de googleapis
+
+      npm install googleapis --save
+
+
+## Instalación de express
+      npm install express
+
+
+## Youtube API
+
+Se necesita tener el client_secret.json para poder realizar los request de forma autorizada, para eso hay que ir a http://google.console.developers y descargarlo.
+      
