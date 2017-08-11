@@ -17,15 +17,21 @@ var TOKEN_DIR = (process.env.HOME || process.env.HOMEPATH ||
 var TOKEN_PATH = TOKEN_DIR + 'youtube-nodejs-quickstart.json';
 console.log('TOKEN_DIR'+TOKEN_PATH);
 
-// Load client secrets from a local file.
-fs.readFile('client_secret.json', function processClientSecrets(err, content) {
-  if (err) {
-    console.log('Error loading client secret file: ' + err);
-    return;
+module.exports = {
+  foo : function(response) {
+    // Load client secrets from a local file.
+    fs.readFile('client_secret.json', function processClientSecrets(err, content) {
+      if (err) {
+        console.log('Error loading client secret file: ' + err);
+        return;
+      }
+      // Authorize a client with the loaded credentials, then call the YouTube API.
+      authorize(JSON.parse(content), getIdCaption,response);
+    });
   }
-  // Authorize a client with the loaded credentials, then call the YouTube API.
-  authorize(JSON.parse(content), getIdCaption);
-});
+}
+
+
 
 /**
  * Create an OAuth2 client with the given credentials, and then execute the
@@ -34,7 +40,7 @@ fs.readFile('client_secret.json', function processClientSecrets(err, content) {
  * @param {Object} credentials The authorization client credentials.
  * @param {function} callback The callback to call with the authorized client.
  */
-function authorize(credentials, callback) {
+function authorize(credentials, callback,response) {
   var clientSecret = credentials.installed.client_secret;
   var clientId = credentials.installed.client_id;
   var redirectUrl = credentials.installed.redirect_uris[0];
@@ -47,7 +53,7 @@ function authorize(credentials, callback) {
       getNewToken(oauth2Client, callback);
     } else {
       oauth2Client.credentials = JSON.parse(token);
-      callback(oauth2Client);
+      callback(oauth2Client,response);
     }
   });
 }
@@ -107,7 +113,7 @@ function storeToken(token) {
  * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
  */
 
-function getIdCaption(auth){
+function getIdCaption(auth,res){
   var service = google.youtube('v3');
   service.captions.list({
     auth: auth,
@@ -125,26 +131,6 @@ function getIdCaption(auth){
     //var obj = JSON.parse(body);
     idCaption = String(response.items[0].id);
     console.log("El id del caption:"+ idCaption);
-    getCaption(idCaption);
-  });
-}
-
-
-
-function getCaption(idCaption){
-  var service = google.youtube('v3');
-  service.captions.download({
-      id:idCaption,
-      //formato del subtitulo
-      tfmt: captionFormat
-  },function(err,response){
-    if (err){
-      console.log('The API returned an error' + err)
-      return;
-    }else{
-      console.log('response'+response);
-      var caption = response.body;
-      console.log('caption:'+caption);
-    }
+    res['id-caption'] = idCaption;
   });
 }
