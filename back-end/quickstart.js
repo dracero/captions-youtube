@@ -2,6 +2,8 @@ var fs = require('fs');
 var readline = require('readline');
 var google = require('googleapis');
 var googleAuth = require('google-auth-library');
+var python_shell = require('python-shell');
+
 
 //Informacion del video que quiero obtener informacion
 var videoId = "QdjO0e10O_I";
@@ -19,17 +21,20 @@ console.log('TOKEN_DIR'+TOKEN_PATH);
 
 module.exports = {
   foo : function(response) {
-    // Load client secrets from a local file.
-    fs.readFile('client_secret.json', function processClientSecrets(err, content) {
-      if (err) {
-        console.log('Error loading client secret file: ' + err);
-        return;
-      }
-      // Authorize a client with the loaded credentials, then call the YouTube API.
-      authorize(JSON.parse(content), getIdCaption,response);
-    });
-  }
+        return new Promise(function(resolve,reject){
+          // Load client secrets from a local file.
+          fs.readFile('client_secret.json', function processClientSecrets(err, content) {
+            if (err) {
+              console.log('Error loading client secret file: ' + err);
+              reject('error loading client secret file');
+            }
+            // Authorize a client with the loaded credentials, then call the YouTube API.
+             authorize(JSON.parse(content), getIdCaption,response,resolve);
+        });
+      });
+    }
 }
+
 
 
 
@@ -40,7 +45,7 @@ module.exports = {
  * @param {Object} credentials The authorization client credentials.
  * @param {function} callback The callback to call with the authorized client.
  */
-function authorize(credentials, callback,response) {
+function authorize(credentials, callback,response,resolve) {
   var clientSecret = credentials.installed.client_secret;
   var clientId = credentials.installed.client_id;
   var redirectUrl = credentials.installed.redirect_uris[0];
@@ -51,9 +56,10 @@ function authorize(credentials, callback,response) {
   fs.readFile(TOKEN_PATH, function(err, token) {
     if (err) {
       getNewToken(oauth2Client, callback);
+      return new Promise.reject('getNewToken');
     } else {
       oauth2Client.credentials = JSON.parse(token);
-      callback(oauth2Client,response);
+      callback(oauth2Client,response,resolve);
     }
   });
 }
@@ -113,7 +119,7 @@ function storeToken(token) {
  * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
  */
 
-function getIdCaption(auth,res){
+function getIdCaption(auth,res,resolve){
   var service = google.youtube('v3');
   service.captions.list({
     auth: auth,
@@ -123,7 +129,6 @@ function getIdCaption(auth,res){
   },function(err,response){
     if (err){
       console.log('The API returned an error' + err)
-      return;
     }
     console.log(response);
     var body = response.body;
@@ -132,5 +137,22 @@ function getIdCaption(auth,res){
     idCaption = String(response.items[0].id);
     console.log("El id del caption:"+ idCaption);
     res['id-caption'] = idCaption;
+    getCaption(res,idCaption);
+    resolve(res);
   });
+}
+
+
+function getCaption(response,id_caption){
+  var options = {
+    mode: 'text',
+    pythonOptions: ['-u'],
+    args: ['value1','value2']
+  };
+
+  python_shell.run('captions.py',options,function(err,results){
+    if (err) throw err
+    console.log('finished'+results);
+  });
+
 }
