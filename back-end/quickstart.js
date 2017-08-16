@@ -10,7 +10,7 @@ var videoId = "QdjO0e10O_I";
 var fieldsOfQuery = "items/id";
 var captionFormat = 'srt';
 var idCaption;
-
+var title;
 // If modifying these scopes, delete your previously saved credentials
   // at ~/.credentials/youtube-nodejs-quickstart.json
 var SCOPES = ['https://www.googleapis.com/auth/youtube.force-ssl'];
@@ -119,39 +119,91 @@ function storeToken(token) {
  * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
  */
 
-function getIdCaption(auth,res,resolve){
+function getIdCaption(auth,response,resolve){
   var service = google.youtube('v3');
   service.captions.list({
     auth: auth,
     part: "id",
     videoId: videoId,
     fields: fieldsOfQuery
-  },function(err,response){
+  },function(err,res){
     if (err){
       console.log('The API returned an error' + err)
     }
-    console.log(response);
-    var body = response.body;
-    console.log('response.items'+response.items[0].id);
+    console.log(res);
+    console.log('response.items'+res.items[0].id);
     //var obj = JSON.parse(body);
-    idCaption = String(response.items[0].id);
+    idCaption = String(res.items[0].id);
     console.log("El id del caption:"+ idCaption);
-    res['id-caption'] = idCaption;
-    getCaption(res,idCaption);
-    resolve(res);
+    response['id-caption'] = idCaption;
+    getTitle(auth,response,resolve);
+    getCaption(idCaption,response,resolve);
+    //resolve(response);
   });
 }
 
 
-function getCaption(response,id_caption){
+function getTitle(auth,response,resolve){
+  var service = google.youtube('v3');
+  service.videos.list({
+    auth:auth,
+    part: "snippet",
+    id: videoId,
+    fields: "items/snippet/title"
+  },function(err,res){
+    if(err){
+      console.log('The API returned an error'+err);
+    }
+    console.log('The title:'+res.items[0].snippet.title);
+    title = res.items[0].snippet.title;
+    response['video-title'] = title;
+    //resolve(response);
+  });
+}
+
+function getCaption(id_caption,response,resolve){
   var options = {
     mode: 'text',
     pythonOptions: [],
-    args: ['--captionid=heflPZxXoUIoPNMyUR3kxiATen2avRT_sza4uq4YPVo=','--action=download']
+    args: ['--captionid='+response['id-caption'],'--action=download']
   };
   python_shell.run('captions.py',options,function(err,results){
     if (err) throw err
-    console.log('finished'+results);
+    console.log('finished\n'+results);
+    response['caption'] = formatCaptionToJSON(results + '');
+    resolve(response);
   });
+}
 
+
+//This function get a hh:mm:ss.ms --> hh:mm:ss.ms
+function parseToSecondFromFormatVTT(timeInFormatVTT){
+  var arr = timeInFormatVTT.split('-->');
+  var beginTime = arr[0];
+  var arrTime = beginTime.split(":");
+  console.log('arrTime:'+arrTime);
+  var hourInSeconds = parseInt(arrTime[0])*60*60;
+  var minuteInSeconds = parseInt(arrTime[1])*60;
+  var ss_ms = arrTime[2] + '';
+  console.log('ss.ms'+ss_ms);
+  var seconds = parseInt(ss_ms.split(".")[0]);
+  console.log('seconds:'+seconds);
+  console.log('hourInSeconds:'+hourInSeconds+'minuteInSeconds:'+minuteInSeconds+'seconds:'+seconds);
+  var time = hourInSeconds + minuteInSeconds + seconds;
+  return time;
+}
+
+function formatCaptionToJSON(responseFromPythonCode){
+  var captionJSON = []
+  var arr = responseFromPythonCode.split(",");
+  for (var i = 4; i < arr.length-2; i+=3) {
+    console.log('arr[i]:'+ arr[i]+' i:'+i);
+    console.log('arr[i+1]:'+ arr[i]+' i:'+i+1);
+    captionJSON.push([parseToSecondFromFormatVTT(arr[i] +''),arr[i+1]]);
+  }
+
+  for (var i = 0; i < captionJSON.length; i++) {
+    console.log('caption'+captionJSON[i])
+  }
+  return captionJSON;
 }

@@ -164,7 +164,7 @@ if __name__ == "__main__":
 
   args = argparser.parse_args()
 
-  if (args.action in ('upload', 'list')):
+  if (args.action in ('upload', 'list', 'all')):
     if not args.videoid:
           exit("Please specify videoid using the --videoid= parameter.")
 
@@ -172,7 +172,7 @@ if __name__ == "__main__":
     if not args.captionid:
           exit("Please specify captionid using the --captionid= parameter.")
 
-  if (args.action in ('upload')):
+  if (args.action in ('upload', 'all')):
     if not args.file:
       exit("Please specify a caption track file using the --file= parameter.")
     if not os.path.exists(args.file):
@@ -187,7 +187,7 @@ if __name__ == "__main__":
     elif args.action == 'update':
       update_caption(youtube, args.captionid, args.file);
     elif args.action == 'download':
-      download_caption(youtube, args.captionid, 'srt')
+      download_caption(youtube, args.captionid, 'vtt')
     elif args.action == 'delete':
       delete_caption(youtube, args.captionid);
     else:
