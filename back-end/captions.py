@@ -25,7 +25,7 @@ from oauth2client.tools import argparser, run_flow
 #   https://developers.google.com/youtube/v3/guides/authentication
 # For more information about the client_secrets.json file format, see:
 #   https://developers.google.com/api-client-library/python/guide/aaa_client_secrets
-CLIENT_SECRETS_FILE = "client_secrets.json"
+CLIENT_SECRETS_FILE = "client_secret.json"
 
 # This OAuth 2.0 access scope allows for full read/write access to the
 # authenticated user's account and requires requests to use an SSL connection.
@@ -164,7 +164,7 @@ if __name__ == "__main__":
 
   args = argparser.parse_args()
 
-  if (args.action in ('upload', 'list', 'all')):
+  if (args.action in ('upload', 'list')):
     if not args.videoid:
           exit("Please specify videoid using the --videoid= parameter.")
 
@@ -172,7 +172,7 @@ if __name__ == "__main__":
     if not args.captionid:
           exit("Please specify captionid using the --captionid= parameter.")
 
-  if (args.action in ('upload', 'all')):
+  if (args.action in ('upload')):
     if not args.file:
       exit("Please specify a caption track file using the --file= parameter.")
     if not os.path.exists(args.file):
@@ -204,4 +204,3 @@ if __name__ == "__main__":
     print "An HTTP error %d occurred:\n%s" % (e.resp.status, e.content)
   else:
     print "Created and managed caption tracks."
-captions.py

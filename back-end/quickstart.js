@@ -146,10 +146,9 @@ function getIdCaption(auth,res,resolve){
 function getCaption(response,id_caption){
   var options = {
     mode: 'text',
-    pythonOptions: ['-u'],
-    args: ['value1','value2']
+    pythonOptions: [],
+    args: ['--captionid=heflPZxXoUIoPNMyUR3kxiATen2avRT_sza4uq4YPVo=','--action=download']
   };
-
   python_shell.run('captions.py',options,function(err,results){
     if (err) throw err
     console.log('finished'+results);
