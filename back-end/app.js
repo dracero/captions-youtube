@@ -16,7 +16,7 @@ app.get('/:video_id',function (req,res){
     'video-title':'',
     'caption':''
   };
-  quickstart.foo(response)
+  quickstart.foo(response,video_id)
   .then(function(response){
     console.log('El response de quickstart:' + response['id-caption']);
     res.status(200);

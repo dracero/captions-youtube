@@ -6,11 +6,12 @@ var python_shell = require('python-shell');
 
 
 //Informacion del video que quiero obtener informacion
-var videoId = "QdjO0e10O_I";
+//var videoId = "QdjO0e10O_I";
 var fieldsOfQuery = "items/id";
 var captionFormat = 'srt';
 var idCaption;
 var title;
+var videoId;
 // If modifying these scopes, delete your previously saved credentials
   // at ~/.credentials/youtube-nodejs-quickstart.json
 var SCOPES = ['https://www.googleapis.com/auth/youtube.force-ssl'];
@@ -20,8 +21,9 @@ var TOKEN_PATH = TOKEN_DIR + 'youtube-nodejs-quickstart.json';
 console.log('TOKEN_DIR'+TOKEN_PATH);
 
 module.exports = {
-  foo : function(response) {
+  foo : function(response,video_id) {
         return new Promise(function(resolve,reject){
+          videoId = video_id
           // Load client secrets from a local file.
           fs.readFile('client_secret.json', function processClientSecrets(err, content) {
             if (err) {
