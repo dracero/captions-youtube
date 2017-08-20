@@ -4,11 +4,13 @@
   <meta charset='UTF-8' />
   </head>
   <body>
-
     <h1 id = "title_of_video"></h1>
     <p id = 'output'> </p>
+
+    <!--
     <button id="authorize-button" style="display: block;">Authorize</button>
     <button id="signout-button" style="display: none;">Sign Out</button>
+    -->
     <link rel="stylesheet" type="text/css" href="style.css">
     <div class = "containter">
       <div id = "player"></div>
@@ -20,16 +22,19 @@
     </div>
 
     <script src="auth.js"></script>
-    <script src="apiCalls.js"></script>
     <script src="playerYoutube.js"></script>
+    <script src="apiCalls.js"></script>
     <script src="captionParse.js"></script>
     <script src = "synchronizeCaptions.js"></script>
 
     <script src = "https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <!--
     <script async defer src="https://apis.google.com/js/api.js"
-      onload="this.onload=function(){};handleClientLoad()"
-      onreadystatechange="if (this.readyState === 'complete') this.onload()">
+    onload="this.onload=function(){};handleClientLoad()"
+    onreadystatechange="if (this.readyState === 'complete') this.onload()">
     </script>
+
+    -->
     <script src="setTimeWithClickInLine.js"></script>
 
 
